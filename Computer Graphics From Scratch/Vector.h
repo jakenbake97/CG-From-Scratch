@@ -93,6 +93,11 @@ public:
 	{
 	}
 
+	static T DotProduct(const Vector3<T>& left, const Vector3<T>& right)
+	{
+		return (left.x * right.x) + (left.y * right.y) + (left.z * right.z);
+	}
+
 	Vector3& operator+(const Vector3<T>& right) const
 	{
 		Vector3<T> temp(*this);

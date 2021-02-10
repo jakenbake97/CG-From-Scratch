@@ -1,28 +1,35 @@
 #include "Canvas.h"
+#include "Scene.h"
+#include "Sphere.h"
+
 
 int main()
 {
-	Vec3 cameraPosition(0.0f,0.0f,0.0f);
-	auto viewportSize = 1;
-	auto projectionPlane = 1;
-	Color backgroundColor(255,255,255,255);
-	
-	Canvas canvas(1920, 1080);
-	for (int x = 0; x <= 255; ++x)
-	{
-		for (int y = 0; y <= 255; ++y)
-		{
-			canvas.PutPixel(x,y, {static_cast<unsigned char>(x),static_cast<unsigned char>(y),255,255});
-		}
-	}
+	//Scene Setup
+	Scene mainScene({{0.0f, 0.0f, 0.0f}, {1,1}, 1, {200,200,255,255}});
 
-	for (int x = -512; x <= -256; ++x)
+	mainScene.AddObjectToScene({{0, -1, 3}, 1, {255, 0, 0, 255}});
+	mainScene.AddObjectToScene({{2, 0, 4}, 1, {0, 0, 255, 255}});
+	mainScene.AddObjectToScene({{-2, 0, 4}, 1, {0, 255, 0, 255}});
+	
+	Canvas canvas(1024, 1024);
+	const auto canvasWidth = (float)canvas.GetWidth();
+	const auto canvasHeight = (float)canvas.GetHeight();
+
+	for (int x = -(int)(canvasWidth/2); x < (int)(canvasWidth/2); ++x)
 	{
-		for (int y = -512; y <= -256; ++y)
+		for (int y = -(int)(canvasHeight/2); y < (int)(canvasHeight/2); ++y)
 		{
-			canvas.PutPixel(x,y, {255,static_cast<unsigned char>(y+512),static_cast<unsigned char>(x+512),255});
+			Vec3 viewportPoint = canvas.CanvasToViewport({x,y}, {mainScene.camera.viewportSize.x, mainScene.camera.viewportSize.y, mainScene.camera.projectionPlaneDistance});
+
+			//const auto& rayDirection = viewportPoint - mainScene.camera.position;
+			const Color color = mainScene.TraceRay(viewportPoint, 1, std::numeric_limits<float>::infinity());
+
+			canvas.PutPixel(x,y, color);
 		}
 	}
 	
 	canvas.SubmitImage();
 }
+
+
