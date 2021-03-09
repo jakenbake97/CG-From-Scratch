@@ -74,7 +74,8 @@ public:
 	}
 
 public:
-	T x, y;
+	union {T x, u;};
+	union {T y, v;};
 };
 typedef Vector2<int> Vec2Int;
 typedef Vector2<float> Vec2;
@@ -162,7 +163,9 @@ public:
 	}
 
 public:
-	T x, y, z;
+	union{T x, r;};
+	union{T y, g;};
+	union{T z, b;};
 };
 typedef Vector3<float> Vec3;
 typedef Vector3<int> Vec3Int;
@@ -172,12 +175,12 @@ class Vector4
 {
 public:
 	Vector4()
-		: x(static_cast<T>(0)), y(static_cast<T>(0)), z(static_cast<T>(0))
+		: x(static_cast<T>(0)), y(static_cast<T>(0)), z(static_cast<T>(0)), w(static_cast<T>(0))
 	{
 	}
 
-	Vector4(T x, T y)
-		: x(x), y(y)
+	Vector4(T x, T y, T z, T w)
+		: x(x), y(y), z(z), w(w)
 	{
 		
 	}
@@ -250,5 +253,8 @@ public:
 	}
 
 public:
-	T x, y, z, w;
+	union{T x, r;};
+	union{T y, g;};
+	union{T z, b;};
+	union{T w, a;};
 };

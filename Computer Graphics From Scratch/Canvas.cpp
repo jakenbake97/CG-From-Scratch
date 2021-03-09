@@ -3,12 +3,12 @@
 #include <iostream>
 #include "lodepng.h"
 
-unsigned Canvas::GetWidth() const
+uint32_t Canvas::GetWidth() const
 {
 	return width;
 }
 
-unsigned Canvas::GetHeight() const
+uint32_t Canvas::GetHeight() const
 {
 	return height;
 }
@@ -18,10 +18,10 @@ Vec2Int Canvas::GetDimensions() const
 	return {(int)width, (int)height};
 }
 
-void Canvas::PutPixel(const int x, const int y, const Color color)
+void Canvas::PutPixel(int x, int y, const Color color)
 {
 	const Vec2Int pixelPos = ConvertToCanvasSpace(x, y);
-
+	
 	if (pixelPos.x < 0 || pixelPos.x >= width || pixelPos.y < 0 || pixelPos.y >= height)
 	{
 		std::cout << "ERROR: pixelPos (" << pixelPos.x << ", " << pixelPos.y << ")" << std::endl;
@@ -42,7 +42,7 @@ void Canvas::PutPixel(Vec2Int pos, Color color)
 
 Vec2Int Canvas::ConvertToCanvasSpace(int x, int y) const
 {
-	return {(int)(width / 2) + x, (int)(height / 2) + y};
+	return {(int)(width / 2) + x, (int)(height / 2) - y};
 }
 
 Vec2Int Canvas::ConvertToCanvasSpace(Vec2Int pos) const

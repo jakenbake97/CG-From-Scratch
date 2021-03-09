@@ -17,8 +17,8 @@ public:
 	{
 	}
 
-	unsigned int GetWidth() const;
-	unsigned int GetHeight() const;
+	uint32_t GetWidth() const;
+	uint32_t GetHeight() const;
 	Vec2Int GetDimensions() const;
 	void PutPixel(int x, int y, Color color);
 	void PutPixel(Vec2Int pos, Color color);
@@ -27,6 +27,6 @@ public:
 	Vec3 CanvasToViewport(Vec2Int pixel, Vec3 viewport) const;
 	void SubmitImage() const;
 private:
-	unsigned int width, height;
+	uint32_t width, height;
 	std::vector<unsigned char> image;
 };

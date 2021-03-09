@@ -13,16 +13,15 @@ int main()
 	mainScene.AddObjectToScene({{-2, 0, 4}, 1, {0, 255, 0, 255}});
 	
 	Canvas canvas(1024, 1024);
-	const auto canvasWidth = (float)canvas.GetWidth();
-	const auto canvasHeight = (float)canvas.GetHeight();
+	const Vec3 viewport = {mainScene.camera.viewportSize.x, mainScene.camera.viewportSize.y, mainScene.camera.projectionPlaneDistance};
 
-	for (int x = -(int)(canvasWidth/2); x < (int)(canvasWidth/2); ++x)
+	for (int x = -(int)(canvas.GetWidth()/2); x < (int)(canvas.GetWidth()/2); ++x)
 	{
-		for (int y = -(int)(canvasHeight/2); y < (int)(canvasHeight/2); ++y)
+		for (int y = (int)(canvas.GetHeight()/2); y > -(int)(canvas.GetHeight()/2); --y)
 		{
-			Vec3 viewportPoint = canvas.CanvasToViewport({x,y}, {mainScene.camera.viewportSize.x, mainScene.camera.viewportSize.y, mainScene.camera.projectionPlaneDistance});
+			const Vec3 viewportPoint = canvas.CanvasToViewport({x,y}, viewport);
 
-			//const auto& rayDirection = viewportPoint - mainScene.camera.position;
+			const auto& rayDirection = viewportPoint - mainScene.camera.position;
 			const Color color = mainScene.TraceRay(viewportPoint, 1, std::numeric_limits<float>::infinity());
 
 			canvas.PutPixel(x,y, color);

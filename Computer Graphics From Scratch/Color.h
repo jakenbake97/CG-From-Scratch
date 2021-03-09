@@ -1,11 +1,11 @@
 #pragma once
 #include "Vector.h"
 
-class Color
+class Color : public Vector4<char>
 {
 public:
 	Color(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha)
-		: r(red), g(green), b(blue), a(alpha)
+		: Vector4(red, green, blue, alpha)
 	{
 	}
 
@@ -108,6 +108,4 @@ private:
 		}
 		return static_cast<unsigned char>(value);
 	}
-public:
-	unsigned char r, g, b, a;
 };
