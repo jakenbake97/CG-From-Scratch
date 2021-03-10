@@ -3,80 +3,105 @@ template <typename T>
 class Vector2
 {
 public:
-	Vector2()
-		: x(static_cast<T>(0)), y(static_cast<T>(0))
+	Vector2() : x(static_cast<T>(0)), y(static_cast<T>(0))
 	{
 	}
 
-	Vector2(T x, T y)
-		: x(x), y(y)
+	Vector2(T x, T y) : x(x), y(y)
 	{
+	}
+
+	Vector2(const T& value) : x(value), y(value)
+	{
+	}
+
+	T Length()
+	{
+		return sqrt(x * x + y * y);
+	}
+
+	T Dot(const Vector2<T>& v) const
+	{
+		return x * v.x + y * v.y;
+	}
+
+	Vector2<T>& Normalize()
+	{
+		T lengthSquared = Dot(*this);
+		if (lengthSquared > 0)
+		{
+			T inverseLength = 1 / sqrt(lengthSquared);
+			x *= inverseLength, y *= inverseLength;
+		}
+
+		return *this;
+	}
+
+	Vector2<T> operator+(const Vector2<T>& right) const
+	{
+		return Vector2<T>(x + right.x, y + right.y);
+	}
+
+	Vector2<T> operator-(const Vector2<T>& right) const
+	{
+		return Vector2<T>(x - right.x, y - right.y);
+	}
+
+	Vector2<T> operator*(const T& scalar) const
+	{
+		return Vector2<T>(x * scalar, y * scalar);
+	}
+
+	Vector2<T> operator/(const T& scalar) const
+	{
+		if (scalar == 0) return Vector2<T>(*this);
 		
+		return Vector2<T>(x / scalar, y / scalar);
 	}
 
-	Vector2& operator+(const Vector2<T>& right) const
-	{
-		Vector2<T> temp(*this);
-		temp += right;
-		return temp;
-	}
-
-	Vector2& operator-(const Vector2<T>& right) const
-	{
-		Vector2<T> temp(*this);
-		temp -= right;
-		return temp;
-	}
-
-	Vector2& operator*(const Vector2<T>& right) const
-	{
-		Vector2<T> temp(*this);
-		temp *= right;
-		return temp;
-	}
-
-	Vector2& operator/(const Vector2<T>& right) const
-	{
-		Vector2<T> temp(*this);
-		temp /= right;
-		return temp;
-	}
-
-	Vector2& operator+=(const Vector2<T>& right)
+	Vector2<T>& operator+=(const Vector2<T>& right)
 	{
 		x += right.x;
 		y += right.y;
 		return *this;
 	}
 
-	Vector2& operator-=(const Vector2<T>& right)
+	Vector2<T>& operator-=(const Vector2<T>& right)
 	{
 		x -= right.x;
 		y -= right.y;
 		return *this;
 	}
 
-	Vector2& operator*=(const Vector2<T>& right)
+	Vector2<T>& operator*=(const T& scalar)
 	{
-		x *= right.x;
-		y *= right.y;
+		x *= scalar;
+		y *= scalar;
 		return *this;
 	}
 
-	Vector2& operator/=(const Vector2<T>& right)
+	Vector2<T>& operator/=(const T& scalar)
 	{
-		if (right.x != 0 && right.y != 0)
+		if (scalar != 0)
 		{
-			x /= right.x;
-			y /= right.y;
+			x /= scalar;
+			y /= scalar;
 		}
 		return *this;
 	}
 
 public:
-	union {T x, u;};
-	union {T y, v;};
+	union
+	{
+		T x, u;
+	};
+
+	union
+	{
+		T y, v;
+	};
 };
+
 typedef Vector2<int> Vec2Int;
 typedef Vector2<float> Vec2;
 
@@ -84,50 +109,72 @@ template <typename T>
 class Vector3
 {
 public:
-	Vector3()
-		: x(static_cast<T>(0)), y(static_cast<T>(0)), z(static_cast<T>(0))
+	Vector3() : x(static_cast<T>(0)), y(static_cast<T>(0)), z(static_cast<T>(0))
 	{
 	}
 
-	Vector3(T x, T y, T z)
-		: x(x), y(y), z(z)
+	Vector3(T x, T y, T z) : x(x), y(y), z(z)
 	{
 	}
 
-	static T DotProduct(const Vector3<T>& left, const Vector3<T>& right)
+	Vector3(const T& value) : x(value), y(value), z(value)
 	{
-		return (left.x * right.x) + (left.y * right.y) + (left.z * right.z);
 	}
 
-	Vector3& operator+(const Vector3<T>& right) const
+	T Length()
 	{
-		Vector3<T> temp(*this);
-		temp += right;
-		return temp;
+		return sqrt(x * x + y * y + z * z);
 	}
 
-	Vector3& operator-(const Vector3<T>& right) const
+	T Dot(const Vector3<T>& v) const
 	{
-		Vector3<T> temp(*this);
-		temp -= right;
-		return temp;
+		return x * v.x + y * v.y + z * v.z;
 	}
 
-	Vector3& operator*(const Vector3<T>& right) const
+	Vector3<T>& Normalize()
 	{
-		Vector3<T> temp(*this);
-		temp *= right;
-		return temp;
+		T lengthSquared = Dot(*this);
+		if (lengthSquared > 0)
+		{
+			T inverseLength = 1 / sqrt(lengthSquared);
+			x *= inverseLength, y *= inverseLength, z *= inverseLength;
+		}
+
+		return *this;
 	}
 
-	Vector3& operator/(const Vector3<T>& right) const
+	Vector3<T> Cross(const Vector3<T>& v) const
 	{
-		Vector3<T> temp(*this);
-		temp /= right;
-		return temp;
+		return Vector3<T>(
+			y * v.z - z * v.y,
+			z * v.x - x * v.z,
+			x * v.y - y * v.x
+			);
 	}
 
-	Vector3& operator+=(const Vector3<T>& right)
+	Vector3<T> operator+(const Vector3<T>& right) const
+	{
+		return Vector3<T>(x + right.x, y + right.y, z + right.z);
+	}
+
+	Vector3<T> operator-(const Vector3<T>& right) const
+	{
+		return Vector3<T>(x - right.x, y - right.y, z - right.z);
+	}
+
+	Vector3<T> operator*(const T& scalar) const
+	{
+		return Vector3<T>(x * scalar, y * scalar, z * scalar);
+	}
+
+	Vector3<T> operator/(const T& scalar) const
+	{
+		if (scalar == 0) return Vector3<T>(*this);
+		
+		return Vector3<T>(x / scalar, y / scalar, z / scalar);
+	}
+
+	Vector3<T>& operator+=(const Vector3<T>& right)
 	{
 		x += right.x;
 		y += right.y;
@@ -135,7 +182,7 @@ public:
 		return *this;
 	}
 
-	Vector3& operator-=(const Vector3<T>& right)
+	Vector3<T>& operator-=(const Vector3<T>& right)
 	{
 		x -= right.x;
 		y -= right.y;
@@ -143,30 +190,42 @@ public:
 		return *this;
 	}
 
-	Vector3& operator*=(const Vector3<T>& right)
+	Vector3<T>& operator*=(const T& scalar)
 	{
-		x *= right.x;
-		y *= right.y;
-		z *= right.z;
+		x *= scalar;
+		y *= scalar;
+		z *= scalar;
 		return *this;
 	}
 
-	Vector3& operator/=(const Vector3<T>& right)
+	Vector3<T>& operator/=(const T& scalar)
 	{
-		if (right.x != 0 && right.y != 0)
+		if (scalar != 0)
 		{
-			x /= right.x;
-			y /= right.y;
-			z /= right.z;
+			x /= scalar;
+			y /= scalar;
+			z /= scalar;
 		}
 		return *this;
 	}
 
 public:
-	union{T x, r;};
-	union{T y, g;};
-	union{T z, b;};
+	union
+	{
+		T x, r;
+	};
+
+	union
+	{
+		T y, g;
+	};
+
+	union
+	{
+		T z, b;
+	};
 };
+
 typedef Vector3<float> Vec3;
 typedef Vector3<int> Vec3Int;
 
@@ -174,46 +233,63 @@ template <typename T>
 class Vector4
 {
 public:
-	Vector4()
-		: x(static_cast<T>(0)), y(static_cast<T>(0)), z(static_cast<T>(0)), w(static_cast<T>(0))
+	Vector4() : x(static_cast<T>(0)), y(static_cast<T>(0)), z(static_cast<T>(0)), w(static_cast<T>(0))
 	{
 	}
 
-	Vector4(T x, T y, T z, T w)
-		: x(x), y(y), z(z), w(w)
+	Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w)
 	{
+	}
+
+	Vector4(const T& value) : x(value), y(value), z(value), w(value)
+	{
+	}
+
+	T Length()
+	{
+		return sqrt(x * x + y * y + z * z + w * w);
+	}
+
+	T Dot(const Vector4<T>& v) const
+	{
+		return x * v.x + y * v.y + z * v.z + w * v.w;
+	}
+
+	Vector4<T>& Normalize()
+	{
+		T lengthSquared = Dot(*this);
+		if (lengthSquared > 0)
+		{
+			T inverseLength = 1 / sqrt(lengthSquared);
+			x *= inverseLength, y *= inverseLength, z *= inverseLength, w *= inverseLength;
+		}
+
+		return *this;
+	}
+	
+	Vector4<T> operator+(const Vector4<T>& right) const
+	{
+		return Vector4<T>(x + right.x, y + right.y, z + right.z, w + right.w);
+	}
+
+	Vector4<T> operator-(const Vector4<T>& right) const
+	{
+		return Vector4<T>(x - right.x, y - right.y, z - right.z, w - right.w);
+	}
+
+	Vector4<T> operator*(const T& scalar) const
+	{
+		return Vector4<T>(x * scalar, y * scalar, z * scalar, w * scalar);
+	}
+
+	Vector4<T> operator/(const T& scalar) const
+	{
+		if (scalar == 0) return Vector4<T>(*this);
 		
+		return Vector4<T>(x / scalar, y / scalar, z / scalar, w / scalar);
 	}
 
-	Vector4& operator+(const Vector4<T>& right) const
-	{
-		Vector4<T> temp(*this);
-		temp += right;
-		return temp;
-	}
-
-	Vector4& operator-(const Vector4<T>& right) const
-	{
-		Vector4<T> temp(*this);
-		temp -= right;
-		return temp;
-	}
-
-	Vector4& operator*(const Vector4<T>& right) const
-	{
-		Vector4<T> temp(*this);
-		temp *= right;
-		return temp;
-	}
-
-	Vector4& operator/(const Vector4<T>& right) const
-	{
-		Vector4<T> temp(*this);
-		temp /= right;
-		return temp;
-	}
-
-	Vector4& operator+=(const Vector4<T>& right)
+	Vector4<T>& operator+=(const Vector4<T>& right)
 	{
 		x += right.x;
 		y += right.y;
@@ -222,7 +298,7 @@ public:
 		return *this;
 	}
 
-	Vector4& operator-=(const Vector4<T>& right)
+	Vector4<T>& operator-=(const Vector4<T>& right)
 	{
 		x -= right.x;
 		y -= right.y;
@@ -231,30 +307,45 @@ public:
 		return *this;
 	}
 
-	Vector4& operator*=(const Vector4<T>& right)
+	Vector4<T>& operator*=(const T& scalar)
 	{
-		x *= right.x;
-		y *= right.y;
-		z *= right.z;
-		w *= right.w;
+		x *= scalar;
+		y *= scalar;
+		z *= scalar;
+		w *= scalar;
 		return *this;
 	}
 
-	Vector4& operator/=(const Vector4<T>& right)
+	Vector4<T>& operator/=(const T& scalar)
 	{
-		if (right.x != 0 && right.y != 0 && right.z != 0 && right.w != 0)
+		if (scalar != 0)
 		{
-			x /= right.x;
-			y /= right.y;
-			z /= right.z;
-			w /= right.w;
+			x /= scalar;
+			y /= scalar;
+			z /= scalar;
+			w /= scalar;
 		}
 		return *this;
 	}
 
 public:
-	union{T x, r;};
-	union{T y, g;};
-	union{T z, b;};
-	union{T w, a;};
+	union
+	{
+		T x, r;
+	};
+
+	union
+	{
+		T y, g;
+	};
+
+	union
+	{
+		T z, b;
+	};
+
+	union
+	{
+		T w, a;
+	};
 };

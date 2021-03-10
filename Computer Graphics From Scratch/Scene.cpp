@@ -4,14 +4,19 @@
 
 Scene::Scene() = default;
 
-Scene::Scene(Camera cam)
-	: camera(std::move(cam))
+Scene::Scene(const Camera cam)
+	: camera(cam)
 {
 }
 
 void Scene::AddObjectToScene(Sphere newSphere)
 {
 	objects.push_back(newSphere);
+}
+
+void Scene::AddLightToScene(Light light)
+{
+	lights.push_back(light);
 }
 
 void Scene::CreateCamera(Vec3 position, Vec2 viewport, float nearPlane, Color clearColor)
@@ -26,9 +31,9 @@ Vec2 Scene::RaySphereIntersection(const Vec3& origin, const Vec3& direction, con
 {
 	auto sphereToOrigin = origin - sphere.center;
 
-	const auto a = Vec3::DotProduct(direction, direction);
-	const auto b = 2 * Vec3::DotProduct(sphereToOrigin, direction);
-	const auto c = Vec3::DotProduct(sphereToOrigin, sphereToOrigin) - sphere.radius * sphere.radius;
+	const auto a = direction.Dot(direction);
+	const auto b = 2 * sphereToOrigin.Dot(direction);
+	const auto c = sphereToOrigin.Dot(sphereToOrigin) - sphere.radius * sphere.radius;
 
 	const auto discriminant = b * b - 4 * a * c;
 	if (discriminant < 0)
@@ -44,21 +49,21 @@ Vec2 Scene::RaySphereIntersection(const Vec3& origin, const Vec3& direction, con
 
 Color Scene::TraceRay(Vec3 rayDirection, float minDist, float maxDist)
 {
-	float closestPoint = std::numeric_limits<float>::infinity();
+	float closestDistance = std::numeric_limits<float>::infinity();
 	Sphere* closestSphere = nullptr;
 
 	for (auto& sphere : objects)
 	{
 		const Vec2 hitPoints = RaySphereIntersection(camera.position, rayDirection, sphere);
 
-		if (hitPoints.x < closestPoint && (minDist < hitPoints.x && hitPoints.x < maxDist))
+		if (hitPoints.x < closestDistance && (minDist < hitPoints.x && hitPoints.x < maxDist))
 		{
-			closestPoint = hitPoints.x;
+			closestDistance = hitPoints.x;
 			closestSphere = &sphere;
 		}
-		if (hitPoints.y < closestPoint && (minDist < hitPoints.y && hitPoints.y < maxDist))
+		if (hitPoints.y < closestDistance && (minDist < hitPoints.y && hitPoints.y < maxDist))
 		{
-			closestPoint = hitPoints.y;
+			closestDistance = hitPoints.y;
 			closestSphere = &sphere;
 		}
 	}
@@ -68,5 +73,43 @@ Color Scene::TraceRay(Vec3 rayDirection, float minDist, float maxDist)
 		return camera.clearColor;
 	}
 
-	return closestSphere->color;
+	auto point = camera.position + rayDirection * closestDistance;
+	auto norm = point - closestSphere->center;
+	norm.Normalize();
+
+	return closestSphere->color * ComputeLighting(point,norm);
+}
+
+float Scene::ComputeLighting(Vec3 point, Vec3 normal)
+{
+	float i = 0.0f;
+
+	for (auto& light : lights)
+	{
+		if (light.type == Light::Ambient)
+		{
+			i += light.intensity;
+		}
+		else
+		{
+			Vec3 lightVector;
+			if (light.type == Light::Point)
+			{
+				lightVector = light.position - point;
+			}
+			else
+			{
+				lightVector = light.direction;
+			}
+
+			float normDotLight = normal.Dot(lightVector);
+
+			if (normDotLight > 0)
+			{
+				i += light.intensity * normDotLight/(normal.Length() * lightVector.Length());
+			}
+		}
+	}
+
+	return i;
 }
