@@ -5,8 +5,8 @@
 class Sphere
 {
 public:
-	Sphere(Vec3 center, float radius, Color color)
-		: center(center), radius(radius), color(color)
+	Sphere(Vec3 center, float radius, Color color, int specular)
+		: center(center), radius(radius), color(color), specular(specular)
 	{
 	}
 
@@ -17,4 +17,5 @@ public:
 	Vec3 center;
 	float radius;
 	Color color;
+	int specular;
 };

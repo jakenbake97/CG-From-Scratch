@@ -77,18 +77,20 @@ Color Scene::TraceRay(Vec3 rayDirection, float minDist, float maxDist)
 	auto norm = point - closestSphere->center;
 	norm.Normalize();
 
-	return closestSphere->color * ComputeLighting(point,norm);
+	return closestSphere->color * ComputeLighting(point, norm, rayDirection * -1.0f, closestSphere->specular);
 }
 
-float Scene::ComputeLighting(Vec3 point, Vec3 normal)
+float Scene::ComputeLighting(Vec3 point, Vec3 normal, Vec3 view, int specular)
 {
-	float i = 0.0f;
+	float intensity = 0.0f;
+	const float normalLength = normal.Length();
+	float viewLength = view.Length();
 
 	for (auto& light : lights)
 	{
 		if (light.type == Light::Ambient)
 		{
-			i += light.intensity;
+			intensity += light.intensity;
 		}
 		else
 		{
@@ -102,14 +104,28 @@ float Scene::ComputeLighting(Vec3 point, Vec3 normal)
 				lightVector = light.direction;
 			}
 
-			float normDotLight = normal.Dot(lightVector);
+			// Diffuse reflection
+			const float normDotLight = normal.Dot(lightVector);
 
 			if (normDotLight > 0)
 			{
-				i += light.intensity * normDotLight/(normal.Length() * lightVector.Length());
+				intensity += light.intensity * normDotLight / (normalLength * lightVector.Length());
+			}
+
+			// Specular Reflection
+			if (specular >= 0)
+			{
+				float scaledDot = 2.0f * normal.Dot(lightVector);
+				Vec3 reflectionVector = (normal * scaledDot) - lightVector;
+				const float reflectionDotView = reflectionVector.Dot(view);
+				if (reflectionDotView > 0)
+				{
+					intensity += light.intensity * powf(reflectionDotView / (reflectionVector.Length() * viewLength),
+					                                    specular);
+				}
 			}
 		}
 	}
 
-	return i;
+	return intensity;
 }

@@ -22,5 +22,5 @@ private:
 	std::vector<Sphere> objects;
 	std::vector<Light> lights;
 
-	float ComputeLighting(Vec3 point, Vec3 normal);
+	float ComputeLighting(Vec3 point, Vec3 normal, Vec3 view, int specular);
 };

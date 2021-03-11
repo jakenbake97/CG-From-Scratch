@@ -8,10 +8,10 @@ int main()
 	//Scene Setup
 	Scene mainScene({{0.0f, 0.0f, 0.0f}, {1,1}, 1, {200,200,255,255}});
 
-	mainScene.AddObjectToScene({{0, -1, 3}, 1, {255, 0, 0, 255}});
-	mainScene.AddObjectToScene({{2, 0, 4}, 1, {0, 0, 255, 255}});
-	mainScene.AddObjectToScene({{-2, 0, 4}, 1, {0, 255, 0, 255}});
-	mainScene.AddObjectToScene({{0, -5001, 0}, 5000, {255, 255, 0, 255}});
+	mainScene.AddObjectToScene({{0, -1, 3}, 1, {255, 0, 0, 255}, 500});
+	mainScene.AddObjectToScene({{2, 0, 4}, 1, {0, 0, 255, 255}, 500});
+	mainScene.AddObjectToScene({{-2, 0, 4}, 1, {0, 255, 0, 255}, 10});
+	mainScene.AddObjectToScene({{0, -5001, 0}, 5000, {255, 255, 0, 255}, 1000});
 
 	mainScene.AddLightToScene({Light::Ambient, 0.2f});
 	mainScene.AddLightToScene({Light::Point, 0.6f, {2,1,0}} );
