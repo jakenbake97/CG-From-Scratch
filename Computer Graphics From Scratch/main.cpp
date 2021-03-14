@@ -22,7 +22,7 @@ int main()
 
 	for (int x = -(int)(canvas.GetWidth()/2); x < (int)(canvas.GetWidth()/2); ++x)
 	{
-		for (int y = (int)(canvas.GetHeight()/2); y > -(int)(canvas.GetHeight()/2); --y)
+		for (int y = -(int)(canvas.GetHeight()/2); y < (int)(canvas.GetHeight()/2); ++y)
 		{
 			const Vec3 viewportPoint = canvas.CanvasToViewport({x,y}, viewport);
 

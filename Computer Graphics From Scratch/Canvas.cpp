@@ -42,7 +42,7 @@ void Canvas::PutPixel(Vec2Int pos, Color color)
 
 Vec2Int Canvas::ConvertToCanvasSpace(int x, int y) const
 {
-	return {(int)(width / 2) + x, (int)(height / 2) - y};
+	return {(int)(width / 2) + x, (int)(height / 2) - y - 1};
 }
 
 Vec2Int Canvas::ConvertToCanvasSpace(Vec2Int pos) const
@@ -52,7 +52,7 @@ Vec2Int Canvas::ConvertToCanvasSpace(Vec2Int pos) const
 
 Vec3 Canvas::CanvasToViewport(Vec2Int pixel, Vec3 viewport) const
 {
-	return Vec3{pixel.x * (viewport.x / (float)width), pixel.y * (viewport.y / (float)height),viewport.z};
+	return Vec3{pixel.x * viewport.x / (float)width, pixel.y * viewport.y / (float)height, viewport.z};
 }
 
 void Canvas::SubmitImage() const

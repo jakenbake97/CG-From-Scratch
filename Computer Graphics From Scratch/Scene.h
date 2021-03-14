@@ -15,6 +15,7 @@ public:
 	void CreateCamera(Vec3 position, Vec2 viewport, float nearPlane, Color clearColor);
 
 	static Vec2 RaySphereIntersection(const Vec3& origin, const Vec3& direction, const Sphere& sphere);
+	void ClosestIntersection(Vec3 origin, Vec3 rayDirection, float minDist, float maxDist, float& closestDistance, Sphere** closestSphere);
 	Color TraceRay(Vec3 rayDirection, float minDist, float maxDist);
 	
 	Camera camera;
