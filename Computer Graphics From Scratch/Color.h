@@ -4,6 +4,11 @@
 class Color : public Vector4<unsigned char>
 {
 public:
+	Color(unsigned char red, unsigned char green, unsigned char blue)
+		: Vector4(red, green, blue, 255)
+	{
+	}
+
 	Color(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha)
 		: Vector4(red, green, blue, alpha)
 	{
@@ -13,10 +18,15 @@ public:
 	{
 		return {
 			Clamp(r * right),
-		Clamp(g * right),
-		Clamp(b * right),
+			Clamp(g * right),
+			Clamp(b * right),
 			255
 		};
+	}
+
+	Color operator+(const Color& right) const
+	{
+		return {Clamp(r + right.r), Clamp(g + right.g), Clamp(b + right.b), Clamp(a + right.a)};
 	}
 
 	Color& operator+=(const Color& right)

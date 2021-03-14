@@ -7,11 +7,38 @@ int main()
 {
 	//Scene Setup
 	Scene mainScene({{0.0f, 0.0f, 0.0f}, {1,1}, 1, {200,200,255,255}});
+	
+	Sphere redSphere{};
+	redSphere.center = {0, -1, 3};
+	redSphere.radius = 1;
+	redSphere.color = {255,0,0};
+	redSphere.specular = 500;
+	redSphere.reflectivity = 0.2f;
+	mainScene.AddObjectToScene(&redSphere);
 
-	mainScene.AddObjectToScene({{0, -1, 3}, 1, {255, 0, 0, 255}, 500});
-	mainScene.AddObjectToScene({{2, 0, 4}, 1, {0, 0, 255, 255}, 500});
-	mainScene.AddObjectToScene({{-2, 0, 4}, 1, {0, 255, 0, 255}, 10});
-	mainScene.AddObjectToScene({{0, -5001, 0}, 5000, {255, 255, 0, 255}, 1000});
+	Sphere blueSphere{};
+	blueSphere.center = {2, 0, 4};
+	blueSphere.radius = 1;
+	blueSphere.color = {0,0,255};
+	blueSphere.specular = 500;
+	blueSphere.reflectivity = 0.3f;
+	mainScene.AddObjectToScene(&blueSphere);
+
+	Sphere greenSphere{};
+	greenSphere.center = {-2, 0, 4};
+	greenSphere.radius = 1;
+	greenSphere.color = {0, 255, 0};
+	greenSphere.specular = 10;
+	greenSphere.reflectivity = 0.4f;
+	mainScene.AddObjectToScene(&greenSphere);
+
+	Sphere groundSphere{};
+	groundSphere.center = {0, -5001, 0};
+	groundSphere.radius = 5000;
+	groundSphere.color = {255, 255, 0};
+	groundSphere.specular = 1000;
+	groundSphere.reflectivity = 0.5f;
+	mainScene.AddObjectToScene(&groundSphere);
 
 	mainScene.AddLightToScene({Light::Ambient, 0.2f});
 	mainScene.AddLightToScene({Light::Point, 0.6f, {2,1,0}} );
@@ -26,7 +53,7 @@ int main()
 		{
 			const Vec3 viewportPoint = canvas.CanvasToViewport({x,y}, viewport);
 
-			const Color color = mainScene.TraceRay(viewportPoint, 1, std::numeric_limits<float>::infinity());
+			const Color color = mainScene.TraceRay(mainScene.camera.position, viewportPoint, 1, std::numeric_limits<float>::infinity(), 3);
 
 			canvas.PutPixel(x,y, color);
 		}

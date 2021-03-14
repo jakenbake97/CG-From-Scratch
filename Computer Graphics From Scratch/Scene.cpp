@@ -9,9 +9,9 @@ Scene::Scene(const Camera cam)
 {
 }
 
-void Scene::AddObjectToScene(Sphere newSphere)
+void Scene::AddObjectToScene(Sphere* pNewSphere)
 {
-	objects.push_back(newSphere);
+	objects.push_back(pNewSphere);
 }
 
 void Scene::AddLightToScene(Light light)
@@ -27,13 +27,13 @@ void Scene::CreateCamera(Vec3 position, Vec2 viewport, float nearPlane, Color cl
 	camera.clearColor = clearColor;
 }
 
-Vec2 Scene::RaySphereIntersection(const Vec3& origin, const Vec3& direction, const Sphere& sphere)
+Vec2 Scene::RaySphereIntersection(const Vec3& origin, const Vec3& direction, const Sphere* sphere)
 {
-	const auto sphereToOrigin = origin - sphere.center;
+	const auto sphereToOrigin = origin - sphere->center;
 
 	const auto a = direction.Dot(direction);
 	const auto b = 2 * sphereToOrigin.Dot(direction);
-	const auto c = sphereToOrigin.Dot(sphereToOrigin) - sphere.radius * sphere.radius;
+	const auto c = sphereToOrigin.Dot(sphereToOrigin) - sphere->radius * sphere->radius;
 
 	const auto discriminant = b * b - 4 * a * c;
 	if (discriminant < 0)
@@ -54,39 +54,55 @@ void Scene::ClosestIntersection(Vec3 origin, Vec3 rayDirection, float minDist, f
 	closestDistance = std::numeric_limits<float>::infinity();
 	*closestSphere = nullptr;
 
-	for (auto& sphere : objects)
+	for (auto* sphere : objects)
 	{
 		const Vec2 hitPoints = RaySphereIntersection(origin, rayDirection, sphere);
 
 		if (hitPoints.x < closestDistance && (minDist < hitPoints.x && hitPoints.x < maxDist))
 		{
 			closestDistance = hitPoints.x;
-			*closestSphere = &sphere;
+			*closestSphere = sphere;
 		}
 		if (hitPoints.y < closestDistance && (minDist < hitPoints.y && hitPoints.y < maxDist))
 		{
 			closestDistance = hitPoints.y;
-			*closestSphere = &sphere;
+			*closestSphere = sphere;
 		}
 	}
 }
 
-Color Scene::TraceRay(Vec3 rayDirection, float minDist, float maxDist)
+Vec3 Scene::ReflectRay(Vec3 ray, Vec3 normal)
+{
+	return normal * normal.Dot(ray) * 2 - ray;
+}
+
+Color Scene::TraceRay(Vec3 origin, Vec3 rayDirection, float minDist, float maxDist, uint32_t recursionDepth)
 {
 	float closestDistance;
 	Sphere* closestSphere{};
-	ClosestIntersection(camera.position, rayDirection, minDist, maxDist, closestDistance, &closestSphere);
+	ClosestIntersection(origin, rayDirection, minDist, maxDist, closestDistance, &closestSphere);
 
 	if (closestSphere == nullptr)
 	{
 		return camera.clearColor;
 	}
 
-	const auto point = camera.position + rayDirection * closestDistance;
+	const auto point = origin + rayDirection * closestDistance;
 	auto norm = point - closestSphere->center;
 	norm.Normalize();
+	const Color localColor = closestSphere->color * ComputeLighting(point, norm, rayDirection * -1.0f, closestSphere->specular);
 
-	return closestSphere->color * ComputeLighting(point, norm, rayDirection * -1.0f, closestSphere->specular);
+	// finish if recursion limit is hit or the object is not reflective
+	if (recursionDepth <= 0 || closestSphere->reflectivity <= 0)
+	{
+		return localColor;
+	}
+
+	// compute reflected color
+	const Vec3 reflectedRay = ReflectRay(rayDirection * -1.0f, norm);
+	const Color reflectedColor = TraceRay(point, reflectedRay, 0.001f, std::numeric_limits<float>::infinity(), --recursionDepth);
+
+	return localColor * (1 - closestSphere->reflectivity) + reflectedColor * closestSphere->reflectivity;
 }
 
 float Scene::ComputeLighting(Vec3 point, Vec3 normal, Vec3 view, int specular)
@@ -136,9 +152,9 @@ float Scene::ComputeLighting(Vec3 point, Vec3 normal, Vec3 view, int specular)
 			// Specular Reflection
 			if (specular >= 0)
 			{
-				float scaledDot = 2.0f * normal.Dot(lightVector);
-				Vec3 reflectionVector = (normal * scaledDot) - lightVector;
+				Vec3 reflectionVector = ReflectRay(lightVector, normal);
 				const float reflectionDotView = reflectionVector.Dot(view);
+
 				if (reflectionDotView > 0)
 				{
 					intensity += light.intensity * powf(reflectionDotView / (reflectionVector.Length() * viewLength),
