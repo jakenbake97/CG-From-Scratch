@@ -6,6 +6,7 @@
 int main()
 {
 	//Scene Setup
+	
 	Scene mainScene({{0.0f, 0.0f, 0.0f}, {1,1}, 1, {200,200,255,255}});
 	
 	Sphere redSphere{};
@@ -51,7 +52,7 @@ int main()
 	{
 		for (int y = -(int)(canvas.GetHeight()/2); y < (int)(canvas.GetHeight()/2); ++y)
 		{
-			const Vec3 viewportPoint = canvas.CanvasToViewport({x,y}, viewport);
+			const Vec3 viewportPoint = mainScene.camera.lookDirection * canvas.CanvasToViewport({x,y}, viewport);
 
 			const Color color = mainScene.TraceRay(mainScene.camera.position, viewportPoint, 1, std::numeric_limits<float>::infinity(), 3);
 
