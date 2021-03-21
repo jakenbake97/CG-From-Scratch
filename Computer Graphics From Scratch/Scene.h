@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include <vector>
 #include "Camera.h"
 #include "Light.h"
@@ -15,8 +16,17 @@ public:
 	void CreateCamera(Vec3 position, Vec2 viewport, float nearPlane, Color clearColor);
 
 	Color TraceRay(Vec3 origin, Vec3 rayDirection, float minDist, float maxDist, uint32_t recursionDepth);
+
+	void LoadEnvironmentMap(const std::string& fileName);
+	Color ReadEnvironmentAtPixel(int x, int y);
 	
 	Camera camera;
+	struct Texture
+	{
+		int width, height, numChannels;
+		unsigned char* data;
+	} environmentMap;
+
 private:
 	std::vector<Sphere*> objects;
 	std::vector<Light> lights;

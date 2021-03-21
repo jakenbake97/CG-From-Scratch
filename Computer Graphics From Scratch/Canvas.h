@@ -25,7 +25,7 @@ public:
 	Vec2Int ConvertToCanvasSpace(int x, int y) const;
 	Vec2Int ConvertToCanvasSpace(Vec2Int pos) const;
 	Vec3 CanvasToViewport(Vec2Int pixel, Vec3 viewport) const;
-	void SubmitImage() const;
+	void SubmitImage(const char* fileName) const;
 private:
 	uint32_t width, height;
 	std::vector<unsigned char> image;

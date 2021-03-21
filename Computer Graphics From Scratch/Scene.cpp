@@ -1,6 +1,8 @@
 #include "Scene.h"
 
-#include <utility>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+#include "stb_image_write.h"
 
 Scene::Scene() = default;
 
@@ -84,7 +86,12 @@ Color Scene::TraceRay(Vec3 origin, Vec3 rayDirection, float minDist, float maxDi
 
 	if (closestSphere == nullptr)
 	{
-		return camera.clearColor;
+		rayDirection.Normalize();
+
+		float u = rayDirection.x / 2 + 0.5f;
+		float v = rayDirection.y / 2 + 0.5f;
+
+		return ReadEnvironmentAtPixel(int(u * environmentMap.width), int(v * environmentMap.height));
 	}
 
 	const auto point = origin + rayDirection * closestDistance;
@@ -103,6 +110,31 @@ Color Scene::TraceRay(Vec3 origin, Vec3 rayDirection, float minDist, float maxDi
 	const Color reflectedColor = TraceRay(point, reflectedRay, 0.001f, std::numeric_limits<float>::infinity(), --recursionDepth);
 
 	return localColor * (1 - closestSphere->reflectivity) + reflectedColor * closestSphere->reflectivity;
+}
+
+void Scene::LoadEnvironmentMap(const std::string& fileName)
+{
+	environmentMap = Texture{};
+
+	auto* image = stbi_load(fileName.c_str(), &environmentMap.width, &environmentMap.height, &environmentMap.numChannels, 0);
+	if (!image)
+	{
+		printf("Failed to load texture file %s \n", fileName.c_str() );
+	}
+	printf("Loaded image with a width of %ipx, a height of %ipx, and %i channels\n", environmentMap.width, environmentMap.height, environmentMap.numChannels);
+
+	environmentMap.data = image;
+
+	stbi_write_png("STBI_test.png", environmentMap.width, environmentMap.height, environmentMap.numChannels, environmentMap.data, 0);
+}
+
+Color Scene::ReadEnvironmentAtPixel(const int x, const int y)
+{
+	return {
+		environmentMap.data[environmentMap.numChannels * (x * environmentMap.width +y)],
+		environmentMap.data[environmentMap.numChannels * (x * environmentMap.width +y) + 1],
+		environmentMap.data[environmentMap.numChannels * (x * environmentMap.width +y) + 2]
+	};
 }
 
 float Scene::ComputeLighting(Vec3 point, Vec3 normal, Vec3 view, int specular)

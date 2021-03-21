@@ -1,7 +1,8 @@
 #include "Canvas.h"
 
 #include <iostream>
-#include "lodepng.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
 
 uint32_t Canvas::GetWidth() const
 {
@@ -55,12 +56,15 @@ Vec3 Canvas::CanvasToViewport(Vec2Int pixel, Vec3 viewport) const
 	return Vec3{pixel.x * viewport.x / (float)width, pixel.y * viewport.y / (float)height, viewport.z};
 }
 
-void Canvas::SubmitImage() const
+void Canvas::SubmitImage(const char* fileName) const
 {
-	const unsigned error = lodepng::encode("test.png", image, width, height);
+	const int success = stbi_write_png(fileName, width, height, 4, image.data(),0);
 
-	if (error)
+	if (!success)
 	{
-		std::cout << "ENCODER ERROR: " << error << ": "<< lodepng_error_text(error) << std::endl;
+		printf("Failed to write image to png");
+		return;
 	}
+
+	printf("Successfully wrote to png image");
 }

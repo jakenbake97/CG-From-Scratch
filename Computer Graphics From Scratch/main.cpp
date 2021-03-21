@@ -44,15 +44,28 @@ int main()
 	mainScene.AddLightToScene({Light::Ambient, 0.2f});
 	mainScene.AddLightToScene({Light::Point, 0.6f, {2,1,0}} );
 	mainScene.AddLightToScene({Light::Directional, 0.6f, {1,4,4}} );
+
+	mainScene.LoadEnvironmentMap("Environments/galileo_probe.hdr");
 	
-	Canvas canvas(1024, 1024);
+	Canvas canvas(mainScene.environmentMap.width, mainScene.environmentMap.height);
 	const Vec3 viewport = {mainScene.camera.viewportSize.x, mainScene.camera.viewportSize.y, mainScene.camera.projectionPlaneDistance};
+
+	for (int x = -mainScene.environmentMap.width / 2; x < mainScene.environmentMap.width / 2; ++x)
+	{
+		for (int y = -mainScene.environmentMap.height / 2; y < mainScene.environmentMap.height / 2; ++y)
+		{
+			canvas.PutPixel(x, y, mainScene.ReadEnvironmentAtPixel(x + mainScene.environmentMap.width / 2,y + mainScene.environmentMap.height / 2));
+		}
+	}
+	canvas.SubmitImage("Galileo.png");
+
+	canvas = Canvas(1024, 1024);
 
 	for (int x = -(int)(canvas.GetWidth()/2); x < (int)(canvas.GetWidth()/2); ++x)
 	{
 		for (int y = -(int)(canvas.GetHeight()/2); y < (int)(canvas.GetHeight()/2); ++y)
 		{
-			const Vec3 viewportPoint = mainScene.camera.lookDirection * canvas.CanvasToViewport({x,y}, viewport);
+			const Vec3 viewportPoint = canvas.CanvasToViewport({x,y}, viewport);
 
 			const Color color = mainScene.TraceRay(mainScene.camera.position, viewportPoint, 1, std::numeric_limits<float>::infinity(), 3);
 
@@ -60,7 +73,7 @@ int main()
 		}
 	}
 	
-	canvas.SubmitImage();
+	canvas.SubmitImage("test.png");
 }
 
 
