@@ -130,10 +130,11 @@ void Scene::LoadEnvironmentMap(const std::string& fileName)
 
 Color Scene::ReadEnvironmentAtPixel(const int x, const int y)
 {
+	unsigned char* pixelOffset = environmentMap.data + (environmentMap.numChannels * ((environmentMap.height - 1 - y) * environmentMap.width + x));
 	return {
-		environmentMap.data[environmentMap.numChannels * (x * environmentMap.width +y)],
-		environmentMap.data[environmentMap.numChannels * (x * environmentMap.width +y) + 1],
-		environmentMap.data[environmentMap.numChannels * (x * environmentMap.width +y) + 2]
+		pixelOffset[0],
+		pixelOffset[1],
+		pixelOffset[2]
 	};
 }
 

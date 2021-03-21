@@ -45,21 +45,11 @@ int main()
 	mainScene.AddLightToScene({Light::Point, 0.6f, {2,1,0}} );
 	mainScene.AddLightToScene({Light::Directional, 0.6f, {1,4,4}} );
 
-	mainScene.LoadEnvironmentMap("Environments/galileo_probe.hdr");
+	mainScene.LoadEnvironmentMap("Environments/christmas_photo_studio_01_4k.hdr");
 	
-	Canvas canvas(mainScene.environmentMap.width, mainScene.environmentMap.height);
 	const Vec3 viewport = {mainScene.camera.viewportSize.x, mainScene.camera.viewportSize.y, mainScene.camera.projectionPlaneDistance};
 
-	for (int x = -mainScene.environmentMap.width / 2; x < mainScene.environmentMap.width / 2; ++x)
-	{
-		for (int y = -mainScene.environmentMap.height / 2; y < mainScene.environmentMap.height / 2; ++y)
-		{
-			canvas.PutPixel(x, y, mainScene.ReadEnvironmentAtPixel(x + mainScene.environmentMap.width / 2,y + mainScene.environmentMap.height / 2));
-		}
-	}
-	canvas.SubmitImage("Galileo.png");
-
-	canvas = Canvas(1024, 1024);
+	Canvas canvas(1024, 1024);
 
 	for (int x = -(int)(canvas.GetWidth()/2); x < (int)(canvas.GetWidth()/2); ++x)
 	{
