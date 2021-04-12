@@ -1,85 +1,95 @@
 #pragma once
 #include "Vector.h"
+#include "Utilities.h"
 
-class Color : public Vector4<unsigned char>
+float RandomInRange(float min, float max);
+
+class Color : public Vector4<float>
 {
 public:
-	Color(unsigned char red, unsigned char green, unsigned char blue)
-		: Vector4(red, green, blue, 255)
+	Color() = default;
+
+	Color(int red, int green, int blue, int alpha = 255)
+		: Vector4(red / 255.0f, green / 255.0f, blue / 255.0f, alpha / 255.0f)
 	{
 	}
 
-	Color(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha)
+	Color(float red, float green, float blue, float alpha = 1.0f)
 		: Vector4(red, green, blue, alpha)
-	{
-	}
+	{}
 
 	Color operator*(const float right) const
 	{
 		return {
-			Clamp(r * right),
-			Clamp(g * right),
-			Clamp(b * right),
-			255
+			r * right,
+			g * right,
+			b * right,
+			a * right
 		};
+	}
+
+	Color operator*=(const float right) 
+	{
+		r *= right;
+		g *= right;
+		b *= right;
+		a *= right;
+		return *this;
 	}
 
 	Color operator+(const Color& right) const
 	{
-		return {Clamp(r + right.r), Clamp(g + right.g), Clamp(b + right.b), Clamp(a + right.a)};
+		return {r + right.r,
+			g + right.g,
+			b + right.b,
+			a + right.a};
 	}
 
 	Color& operator+=(const Color& right)
 	{
-		r = Clamp(r + right.r);
-		g = Clamp(g + right.g);
-		b = Clamp(b + right.b);
-		a = Clamp(a + right.a);
+		r += right.r;
+		g += right.g;
+		b += right.b;
+		a += right.a;
 		return *this;
 	}
 
 	Color& operator-=(const Color& right)
 	{
-		r = Clamp(r - right.r);
-		g = Clamp(g - right.g);
-		b = Clamp(b - right.b);
-		a = Clamp(a - right.a);
+		r -= right.r;
+		g -= right.g;
+		b -= right.b;
+		a -= right.a;
 		return *this;
 	}
 
 	Color& operator*=(const Color& right)
 	{
-		r = Clamp(r * right.r);
-		g = Clamp(g * right.g);
-		b = Clamp(b * right.b);
-		a = Clamp(a * right.a);
+		r *= right.r;
+		g *= right.g;
+		b *= right.b;
+		a *= right.a;
 		return *this;
 	}
-
-private:
-	static unsigned char Clamp(const int value)
+	
+	static Color Random(float min = 0.0f, float max = 1.0f)
 	{
-		if (value < 0)
-		{
-			return 0;
-		}
-		if (value > 255)
-		{
-			return 255;
-		}
-		return static_cast<unsigned char>(value);
-	}
-
-	static unsigned char Clamp(const float value)
-	{
-		if (value < 0.0f)
-		{
-			return 0;
-		}
-		if (value > 255.0f)
-		{
-			return 255;
-		}
-		return static_cast<unsigned char>(value);
+		return { RandomInRange(min, max), RandomInRange(min, max), RandomInRange(min, max) };
 	}
 };
+
+inline Color operator*(float lhs, Color rhs)
+{
+	return rhs * lhs;
+}
+
+inline Color operator*(Color lhs, Color rhs)
+{
+	Color temp;
+	temp.r = lhs.r * rhs.r;
+	temp.g = lhs.g * rhs.g;
+	temp.b = lhs.b * rhs.b;
+	temp.a = lhs.a * rhs.a;
+
+	return temp;
+}

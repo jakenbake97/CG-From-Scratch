@@ -5,11 +5,17 @@
 class Camera
 {
 public:
-	Camera();
-	Camera(Vec3 position, Vec2 viewport, float nearPlane, Color clearColor);
+	Camera() = default;
+	Camera(Vec3 position, Vec3 lookAt, float vFOV, float aspectRatio, float aperture, float focusDist);
+	class Ray RayThroughViewport(Vec2 pixel) const;
 	
 	Vec3 position;
 	Vec2 viewportSize;
-	float projectionPlaneDistance;
-	Color clearColor;
+
+private:
+	Vec3 lowerLeftCorner;
+	Vec3 horizontal;
+	Vec3 vertical;
+	Vec3 u, v, w;
+	float lensRadius;
 };

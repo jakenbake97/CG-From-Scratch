@@ -1,7 +1,6 @@
 #include "Canvas.h"
 
 #include <iostream>
-#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
 uint32_t Canvas::GetWidth() const
@@ -19,36 +18,29 @@ Vec2Int Canvas::GetDimensions() const
 	return {(int)width, (int)height};
 }
 
-void Canvas::PutPixel(int x, int y, const Color color)
+void Canvas::PutPixel(int x, int y, Color color, const int samplesPerPixel)
 {
-	const Vec2Int pixelPos = ConvertToCanvasSpace(x, y);
-	
-	if (pixelPos.x < 0 || pixelPos.x >= width || pixelPos.y < 0 || pixelPos.y >= height)
+	if (x < 0 || x >= width || y < 0 || y >= height)
 	{
-		std::cout << "ERROR: pixelPos (" << pixelPos.x << ", " << pixelPos.y << ")" << std::endl;
+		printf("ERROR: Invalid pixel position (%i,%i)", x, y);
 		return;
 	}
 
-	auto offset = 4 * width * pixelPos.y + 4 * pixelPos.x;
-	image[offset++] = color.r;
-	image[offset++] = color.g;
-	image[offset++] = color.b;
-	image[offset] = color.a;
+	const auto scale = 1.0f / samplesPerPixel;
+	auto r = sqrtf(color.r * scale);
+	auto g = sqrtf(color.g * scale);
+	auto b = sqrtf(color.b * scale);
+
+	auto offset = 4 * ((height - 1 - y) * width + x);
+	image[offset++] = static_cast<unsigned char>(ClampF(r * 255, 0, 255));
+	image[offset++] = static_cast<unsigned char>(ClampF(g * 255, 0, 255));
+	image[offset++] = static_cast<unsigned char>(ClampF(b * 255, 0, 255));
+	image[offset] = 255;
 }
 
-void Canvas::PutPixel(Vec2Int pos, Color color)
+void Canvas::PutPixel(const Vec2Int pos, Color color, const int samplesPerPixel)
 {
-	PutPixel(pos.x, pos.y, color);
-}
-
-Vec2Int Canvas::ConvertToCanvasSpace(int x, int y) const
-{
-	return {(int)(width / 2) + x, (int)(height / 2) - y - 1};
-}
-
-Vec2Int Canvas::ConvertToCanvasSpace(Vec2Int pos) const
-{
-	return ConvertToCanvasSpace(pos.x, pos.y);
+	PutPixel(pos.x, pos.y, color, samplesPerPixel);
 }
 
 Vec3 Canvas::CanvasToViewport(Vec2Int pixel, Vec3 viewport) const
@@ -58,7 +50,7 @@ Vec3 Canvas::CanvasToViewport(Vec2Int pixel, Vec3 viewport) const
 
 void Canvas::SubmitImage(const char* fileName) const
 {
-	const int success = stbi_write_png(fileName, width, height, 4, image.data(),0);
+	const int success = stbi_write_png(fileName, width, height, 4, image.data(), 0);
 
 	if (!success)
 	{
