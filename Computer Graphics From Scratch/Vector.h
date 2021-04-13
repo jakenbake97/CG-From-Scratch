@@ -227,6 +227,22 @@ public:
 		return *this;
 	}
 
+	T operator[](const int index) const
+	{
+		if (index % 3  == 0)
+		{
+			return x;
+		}
+		if (index % 3 == 1)
+		{
+			return y;
+		}
+		else
+		{
+			return z;
+		}
+	}
+
 	float LengthSquared() const
 	{
 		return (x * x) + (y * y) + (z * z);

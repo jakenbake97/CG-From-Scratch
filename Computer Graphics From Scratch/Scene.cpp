@@ -57,8 +57,6 @@ void Scene::LoadEnvironmentMap(const std::string& fileName)
 	printf("Loaded image with a width of %ipx, a height of %ipx, and %i channels\n", environmentMap.width, environmentMap.height, environmentMap.numChannels);
 
 	environmentMap.data = image;
-
-	stbi_write_png("STBI_test.png", environmentMap.width, environmentMap.height, environmentMap.numChannels, environmentMap.data, 0);
 }
 
 Color Scene::ReadEnvironmentAtPixel(const int x, const int y) const

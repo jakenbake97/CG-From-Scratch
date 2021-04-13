@@ -30,3 +30,9 @@ bool Sphere::Hit(const Ray& ray, float tMin, float tMax, HitRecord& rec) const
 
 	return true;
 }
+
+bool Sphere::BoundingBox(float time0, float time1, AABB& outputBox) const
+{
+	outputBox = AABB(center - Vec3(radius, radius, radius), center + Vec3(radius, radius, radius));
+	return true;
+}

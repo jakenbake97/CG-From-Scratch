@@ -1,8 +1,8 @@
 ﻿#include "Camera.h"
 #include "Ray.h"
 
-Camera::Camera(Vec3 position, Vec3 lookAt, float vFOV, float aspectRatio, float aperture, float focusDist)
-	: position(position)
+Camera::Camera(Vec3 position, Vec3 lookAt, float vFOV, float aspectRatio, float aperture, float focusDist, float shutter)
+	: position(position), shutterSpeed(shutter)
 {
 	const float theta = DegreesToRadians(vFOV);
 	const float h = tan(theta / 2.0f);
@@ -22,7 +22,7 @@ Camera::Camera(Vec3 position, Vec3 lookAt, float vFOV, float aspectRatio, float 
 
 Ray Camera::RayThroughViewport(Vec2 pixel) const
 {
-	Vec3 blurDisk = lensRadius * RandomInUnitDisk();
-	Vec3 offset = u * blurDisk.x + v * blurDisk.y;
-	return { position + offset, lowerLeftCorner + pixel.u * horizontal + pixel.v * vertical - position - offset };
+	const Vec3 blurDisk = lensRadius * RandomInUnitDisk();
+	const Vec3 offset = u * blurDisk.x + v * blurDisk.y;
+	return { position + offset, lowerLeftCorner + pixel.u * horizontal + pixel.v * vertical - position - offset, RandomInRange(0.0f, shutterSpeed) };
 }

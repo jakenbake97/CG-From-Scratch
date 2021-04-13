@@ -6,7 +6,7 @@ class Camera
 {
 public:
 	Camera() = default;
-	Camera(Vec3 position, Vec3 lookAt, float vFOV, float aspectRatio, float aperture, float focusDist);
+	Camera(Vec3 position, Vec3 lookAt, float vFOV, float aspectRatio, float aperture, float focusDist, float shutter);
 	class Ray RayThroughViewport(Vec2 pixel) const;
 	
 	Vec3 position;
@@ -18,4 +18,5 @@ private:
 	Vec3 vertical;
 	Vec3 u, v, w;
 	float lensRadius;
+	float shutterSpeed;
 };

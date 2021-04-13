@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include <vector>
+
+#include "BVHNode.h"
 #include "Camera.h"
 #include "HittableList.h"
 #include "Light.h"
@@ -11,6 +13,7 @@ class Scene
 public:
 	Scene();
 	Scene(Camera cam);
+	Scene(const HittableList& objectList);
 
 	void AddCam(Camera cam);
 	Color TraceRay(Ray ray, int depth) const;
@@ -26,5 +29,5 @@ public:
 	} environmentMap{};
 
 public:
-	HittableList world{};
+	BVHNode world{};
 };

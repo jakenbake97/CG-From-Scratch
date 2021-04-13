@@ -3,6 +3,8 @@
 #include <random>
 
 // Common Headers
+#include <chrono>
+
 #include "Ray.h"
 #include "Vector.h"
 #include "Color.h"
@@ -20,13 +22,18 @@ inline float DegreesToRadians(float degrees)
 inline float RandomValue()
 {
 	static std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
-	static std::mt19937 generator;
+	static std::mt19937 generator(std::chrono::system_clock::now().time_since_epoch().count());
 	return distribution(generator);
 }
 
 inline float RandomInRange(float min, float max)
 {
 	return min + (max - min) * RandomValue();
+}
+
+inline int RandomInt(int min, int max)
+{
+	return static_cast<int>(RandomInRange(min, max + 1));
 }
 
 inline Vec3 RandomInUnitSphere()
