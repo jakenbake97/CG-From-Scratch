@@ -1,5 +1,7 @@
 ﻿#include "Window.h"
 
+#include "Color.h"
+
 Window::Window(const std::string& name)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -24,6 +26,8 @@ Window::Window(const std::string& name)
 
 	printf("Pixel Format: %s", SDL_GetPixelFormatName(surface->format->format));
 	pixels = static_cast<unsigned int*>(surface->pixels);
+
+	printf("Window Size: 640, 480.  Surface Size: %i, %i.", surface->w, surface->h);
 }
 
 Window::~Window()
@@ -68,9 +72,9 @@ bool Window::ShouldRun() const
 	return running;
 }
 
-void Window::PutPixel(int x, int y, Uint8 r, Uint8 g, Uint8 b) const
+void Window::PutPixel(const int x, const int y, const Color color) const
 {
-	pixels[x + y * surface->w] = SDL_MapRGB(surface->format, r, g, b);
+	pixels[x + y * surface->w] = SDL_MapRGB(surface->format, color.r, color.g, color.b);
 }
 
 void Window::Submit() const

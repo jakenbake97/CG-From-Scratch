@@ -2,6 +2,8 @@
 #include <SDL.h>
 #include <string>
 
+class Color;
+
 class Window
 {
 public:
@@ -10,7 +12,7 @@ public:
 	void PollEvents();
 	SDL_Surface* GetSurface() const;
 	bool ShouldRun() const;
-	void PutPixel(int x, int y, Uint8 r, Uint8 g, Uint8 b) const;
+	void PutPixel(int x, int y, Color color) const;
 	void Submit() const;
 
 	int GetWidth() const { return surface->w; }
