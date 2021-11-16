@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include <cmath>
 
 template <typename T>
@@ -95,6 +96,11 @@ public:
 			y /= scalar;
 		}
 		return *this;
+	}
+
+	friend void swap(Vector2<T>& lhs, Vector2<T>& rhs)
+	{
+		std::swap(lhs, rhs);
 	}
 
 public:
@@ -254,6 +260,11 @@ public:
 		return fabsf(x) < s && fabsf(y) < s && fabsf(z) < s;
 	}
 
+	friend void swap(Vector3<T>& lhs, Vector3<T>& rhs)
+	{
+		std::swap(lhs, rhs);
+	}
+
 public:
 	union
 	{
@@ -382,6 +393,11 @@ public:
 			w /= scalar;
 		}
 		return *this;
+	}
+
+	friend void swap(Vector4<T>& lhs, Vector4<T>& rhs)
+	{
+		std::swap(lhs, rhs);
 	}
 
 public:
