@@ -15,7 +15,7 @@ std::vector<int> Interpolate(const int i0, const int d0, const int i1, const int
 	auto d = (float)d0;
 	for (int i = i0; i <= i1; i++)
 	{
-		values.push_back(std::round(d));
+		values.push_back((int)std::round(d));
 		d += m;
 	}
 	return values;
@@ -77,7 +77,7 @@ void DrawFilledTriangle(Vec2Int p0, Vec2Int p1, Vec2Int p2, const Color color, c
 		std::vector<int> x012(x01);
 		x012.insert(x012.end(), x12.begin(), x12.end());
 
-		const int m = floorf(x02.size() / 2.0f);
+		const auto m = (int)floorf((float)x02.size() / 2.0f);
 		if (x02[m] < x012[m])
 		{
 			xLeft = x02;

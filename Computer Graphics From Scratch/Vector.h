@@ -250,7 +250,7 @@ public:
 
 	bool NearZero()
 	{
-		const float s = 1e-8;
+		constexpr auto s = (float)1e-8;
 		return fabsf(x) < s && fabsf(y) < s && fabsf(z) < s;
 	}
 

@@ -22,7 +22,7 @@ inline float DegreesToRadians(float degrees)
 inline float RandomValue()
 {
 	static std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
-	static std::mt19937 generator(std::chrono::system_clock::now().time_since_epoch().count());
+	static std::mt19937 generator(static_cast<unsigned int>(std::chrono::system_clock::now().time_since_epoch().count()));
 	return distribution(generator);
 }
 
@@ -33,7 +33,7 @@ inline float RandomInRange(float min, float max)
 
 inline int RandomInt(int min, int max)
 {
-	return static_cast<int>(RandomInRange(min, max + 1));
+	return static_cast<int>(RandomInRange((float)min, (float)max + 1));
 }
 
 inline Vec3 RandomInUnitSphere()

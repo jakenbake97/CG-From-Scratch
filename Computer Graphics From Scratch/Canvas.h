@@ -20,7 +20,7 @@ public:
 	uint32_t GetWidth() const;
 	uint32_t GetHeight() const;
 	Vec2Int GetDimensions() const;
-	void PutPixel(int x, int y, Color color, int samplesPerPixel);
+	void PutPixel(uint32_t x, uint32_t y, Color color, int samplesPerPixel);
 	void PutPixel(Vec2Int pos, Color color, int samplesPerPixel);
 	Vec3 CanvasToViewport(Vec2Int pixel, Vec3 viewport) const;
 	void SubmitImage(const char* fileName) const;

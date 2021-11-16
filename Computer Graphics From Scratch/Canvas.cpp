@@ -18,7 +18,7 @@ Vec2Int Canvas::GetDimensions() const
 	return {(int)width, (int)height};
 }
 
-void Canvas::PutPixel(int x, int y, Color color, const int samplesPerPixel)
+void Canvas::PutPixel(uint32_t x, uint32_t y, Color color, const int samplesPerPixel)
 {
 	if (x < 0 || x >= width || y < 0 || y >= height)
 	{

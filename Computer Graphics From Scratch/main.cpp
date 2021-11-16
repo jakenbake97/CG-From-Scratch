@@ -20,7 +20,7 @@ std::unique_ptr<HittableList> RandomScene()
 		for (int b = -11; b < 11; ++b)
 		{
 			const float chooseMat = RandomValue();
-			Vec3 center(a + 0.9f * RandomValue(), 0.2, b + 0.9f * RandomValue());
+			Vec3 center((float)a + 0.9f * RandomValue(), 0.2f, (float)b + 0.9f * RandomValue());
 
 			if ((center - Vec3(4, 0.2f, 0)).Length() > 0.9f)
 			{
