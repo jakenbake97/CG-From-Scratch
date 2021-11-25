@@ -74,7 +74,7 @@ bool Window::ShouldRun() const
 
 void Window::PutPixel(const int x, const int y, const Color color) const
 {
-	pixels[x + y * surface->w] = SDL_MapRGB(surface->format, color.r, color.g, color.b);
+	pixels[x + y * surface->w] = SDL_MapRGB(surface->format, static_cast<Uint8>(color.r * 255.0f), static_cast<Uint8>(color.g * 255), static_cast<Uint8>(color.b * 255));
 }
 
 void Window::Submit() const
