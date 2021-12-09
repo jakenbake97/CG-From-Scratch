@@ -81,3 +81,12 @@ void Window::Submit() const
 {
 	SDL_UpdateWindowSurface(window);
 }
+
+Vec2Int Window::ViewportToSurface(Vec3 point, Vec2 viewport) const
+{
+	Vec2Int pixel;
+	pixel.x = int(std::round(point.x * (float)GetWidth()/ viewport.x)) + (GetWidth() / 2);
+	pixel.y = int(std::round(point.y * (float)GetHeight() / viewport.y)) + (GetHeight() / 2);
+
+	return pixel;
+}

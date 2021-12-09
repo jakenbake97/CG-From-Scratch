@@ -1,5 +1,6 @@
 #include <SDL.h>
 
+#include "Camera.h"
 #include "Color.h"
 #include "Vector.h"
 #include "Window.h"
@@ -178,17 +179,44 @@ void DrawShadedTriangle(Vec2Int p0, float hue0, Vec2Int p1, float hue1,  Vec2Int
 int main(int argc, char* args[])
 {
 	Window window("Main Window");
+	Camera cam(Vec3(0.0f), 1.0f, 1.0f);
 
-	const Vec2Int point0(100, 100);
-	const Vec2Int point1(215, 400);
-	const Vec2Int point2(200, 75);
+	// The four "front" vertice
+	const Vec3 vertAFront(-2.0f, -0.5f, 5.0f);
+	const Vec3 vertBFront(-2.0f, 0.5f, 5.0f);
+	const Vec3 vertCFront(-1.0f, 0.5f, 5.0f);
+	const Vec3 vertDFront(-1.0f, -0.5f, 5.0f);
+
+	// The four "Back" vertice
+	const Vec3 vertABack(-2.0f, -0.5f, 6.0f);
+	const Vec3 vertBBack(-2.0f, 0.5f, 6.0f);
+	const Vec3 vertCBack(-1.0f, 0.5f, 6.0f);
+	const Vec3 vertDBack(-1.0f, -0.5f, 6.0f);
 
 	while (window.ShouldRun())
 	{
 		window.PollEvents();
-		DrawWireframeTriangle(point0, point1, point2 + 1, { 1.0f, 1.0f, 1.0f }, window);
-		//DrawFilledTriangle(point0, point1, point2, { 1.0f, 0.5f, 1.0f }, window);
-		DrawShadedTriangle(point0, 1.0f, point1, 0.0f, point2, 0.25f, { 0.8f, 0.6f, 0.8f }, window);
+
+
+		// The front face
+		DrawLine(cam.ProjectVertex(vertAFront, window), cam.ProjectVertex(vertBFront, window), { 0.0f, 0.0f, 1.0f }, window);
+		DrawLine(cam.ProjectVertex(vertBFront, window), cam.ProjectVertex(vertCFront, window), { 0.0f, 0.0f, 1.0f }, window);
+		DrawLine(cam.ProjectVertex(vertCFront, window), cam.ProjectVertex(vertDFront, window), { 0.0f, 0.0f, 1.0f }, window);
+		DrawLine(cam.ProjectVertex(vertDFront, window), cam.ProjectVertex(vertAFront, window), { 0.0f, 0.0f, 1.0f }, window);
+
+		// The back face
+		DrawLine(cam.ProjectVertex(vertABack, window), cam.ProjectVertex(vertBBack, window), { 1.0f, 0.0f, 0.0f }, window);
+		DrawLine(cam.ProjectVertex(vertBBack, window), cam.ProjectVertex(vertCBack, window), { 1.0f, 0.0f, 0.0f }, window);
+		DrawLine(cam.ProjectVertex(vertCBack, window), cam.ProjectVertex(vertDBack, window), { 1.0f, 0.0f, 0.0f }, window);
+		DrawLine(cam.ProjectVertex(vertDBack, window), cam.ProjectVertex(vertABack, window), { 1.0f, 0.0f, 0.0f }, window);
+
+		// The front-to-back edges
+		DrawLine(cam.ProjectVertex(vertAFront, window), cam.ProjectVertex(vertABack, window), { 0.0f, 1.0f, 0.0f }, window);
+		DrawLine(cam.ProjectVertex(vertBFront, window), cam.ProjectVertex(vertBBack, window), { 0.0f, 1.0f, 0.0f }, window);
+		DrawLine(cam.ProjectVertex(vertCFront, window), cam.ProjectVertex(vertCBack, window), { 0.0f, 1.0f, 0.0f }, window);
+		DrawLine(cam.ProjectVertex(vertDFront, window), cam.ProjectVertex(vertDBack, window), { 0.0f, 1.0f, 0.0f }, window);
+
+
 		window.Submit();
 	}
 

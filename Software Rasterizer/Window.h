@@ -2,6 +2,8 @@
 #include <SDL.h>
 #include <string>
 
+#include "Vector.h"
+
 class Color;
 
 class Window
@@ -14,6 +16,7 @@ public:
 	bool ShouldRun() const;
 	void PutPixel(int x, int y, Color color) const;
 	void Submit() const;
+	Vec2Int ViewportToSurface(Vec3 point, Vec2 viewport) const;
 
 	int GetWidth() const { return surface->w; }
 	int GetHeight() const { return surface->h; }
